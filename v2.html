@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CEOx Labs - Loading...</title>
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === DYNAMIC VARIABLES === */
+        :root {
+            --primary-color: #000; /* Will be updated via JS */
+            --bg-color: #F8FAFC;
+            --text-dark: #0F172A;
+            --text-gray: #64748B;
+            --radius: 16px;
+            --font-main: 'Cairo', sans-serif;
+        }
+
+        /* === RESET === */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: var(--font-main); background: var(--bg-color); color: var(--text-dark); line-height: 1.6; }
+        
+        /* === LAYOUT === */
+        .container { max-width: 600px; margin: 0 auto; background: #fff; min-height: 100vh; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.03); }
+        .hidden { display: none !important; }
+        .padding-body { padding: 1.5rem; }
+
+        /* === COMPONENTS === */
+        .btn {
+            width: 100%; padding: 1.1rem; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-primary { background: var(--primary-color); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-primary:active { transform: scale(0.98); }
+
+        /* HEADER */
+        .header { padding: 1.5rem; text-align: center; border-bottom: 1px solid #F1F5F9; }
+        .logo { height: 45px; object-fit: contain; }
+        .store-name { font-size: 1.3rem; font-weight: 800; color: var(--primary-color); }
+
+        /* HERO */
+        .hero { padding: 2rem 1.5rem 1rem; text-align: center; }
+        .hero h1 { font-size: 1.7rem; font-weight: 800; line-height: 1.3; margin-bottom: 0.8rem; }
+        .hero p { color: var(--text-gray); font-size: 1rem; margin-bottom: 1rem; }
+        .market-badge { background: #ECFDF5; color: #059669; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 1rem; }
+
+        /* MEDIA */
+        .media-box { width: 100%; aspect-ratio: 1/1; background: #eee; position: relative; overflow: hidden; }
+        .media-content { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* CONTENT */
+        .pain-box { background: #FEF2F2; padding: 1.2rem; border-radius: 12px; margin-bottom: 2rem; border-right: 4px solid #EF4444; }
+        .features li { padding: 0.8rem 0; border-bottom: 1px solid #f1f5f9; display: flex; gap: 10px; font-size: 0.95rem; }
+        .features li::before { content: "✔"; color: var(--primary-color); font-weight: bold; }
+
+        /* OFFER */
+        .offer-box { background: #FFFBEB; border: 2px dashed #FCD34D; padding: 1.5rem; border-radius: 12px; text-align: center; margin: 2rem 1.5rem; }
+        .offer-title { color: #B45309; font-weight: 800; font-size: 1.1rem; }
+
+        /* STICKY CTA */
+        .sticky-nav { position: sticky; bottom: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); padding: 1rem 1.5rem; border-top: 1px solid #eee; z-index: 100; }
+        
+        /* CAPTURE PAGE */
+        .capture-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; margin-top: 2rem; }
+        .tabs { display: flex; background: #F1F5F9; padding: 4px; border-radius: 10px; margin-bottom: 1rem; }
+        .tab { flex: 1; padding: 0.6rem; border: none; background: transparent; font-weight: 600; color: #64748B; cursor: pointer; border-radius: 8px; }
+        .tab.active { background: #fff; color: var(--primary-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .input { width: 100%; padding: 1rem; border: 2px solid #E2E8F0; border-radius: 12px; font-size: 1rem; margin-bottom: 1rem; outline: none; transition: 0.3s; }
+        .input:focus { border-color: var(--primary-color); }
+
+        /* LOADER */
+        #loader { position: fixed; inset: 0; background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="spinner"></div></div>
+
+    <!-- === PAGE 1: PRODUCT (SALES) === -->
+    <div id="view-product" class="container">
+        <!-- Header -->
+        <div class="header">
+            <img id="el-logo" class="logo hidden">
+            <div id="el-storename" class="store-name hidden"></div>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <div id="el-signal" class="market-badge hidden"></div>
+            <h1 id="el-title">...</h1>
+            <p id="el-subtitle">...</p>
+        </div>
+
+        <!-- Media -->
+        <div class="media-box">
+            <div id="el-video" class="media-content hidden"></div>
+            <img id="el-img" class="media-content" src="">
+        </div>
+
+        <!-- Body -->
+        <div class="padding-body">
+            <div class="pain-box">
+                <div style="color: #991B1B; font-weight: 700; margin-bottom: 0.5rem;">🛑 هل تعاني من <span id="el-pain"></span>؟</div>
+                <div style="font-size: 0.9rem;">الحل التقليدي لم يعد يجدي نفعاً. اكتشف الفرق الآن.</div>
+            </div>
+
+            <h3 style="font-weight: 700; margin-bottom: 1rem;">المميزات:</h3>
+            <ul id="el-features" class="features"></ul>
+
+            <div style="margin-top: 1.5rem; font-size: 0.85rem; color: #059669; background: #ECFDF5; padding: 10px; border-radius: 8px;">
+                🛡️ <strong>ضمان المخاطرة الصفرية:</strong> هذا اختبار للطلب فقط. لن يتم خصم أي مبلغ.
+            </div>
+        </div>
+
+        <!-- Offer -->
+        <div class="offer-box">
+            <div id="el-offer-title" class="offer-title"></div>
+            <div id="el-offer-sub" style="font-size: 0.9rem; margin-top: 5px;"></div>
+        </div>
+
+        <div style="height: 80px;"></div> <!-- Spacer -->
+        
+        <!-- Sticky CTA -->
+        <div class="sticky-nav">
+            <button id="btn-cta" class="btn btn-primary">نعم، أنا مهتم (بدون دفع)</button>
+            <div style="text-align: center; font-size: 0.75rem; color: #94A3B8; margin-top: 5px;">الضغط هنا لا يلزمك بالشراء</div>
+        </div>
+    </div>
+
+
+    <!-- === PAGE 2: CAPTURE (LEADS) === -->
+    <div id="view-capture" class="container hidden">
+        <div style="padding: 3rem 1.5rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+            <h2 style="font-weight: 800; margin-bottom: 0.5rem;">قرار ممتاز!</h2>
+            <p style="color: var(--text-gray);">أنت على بعد خطوة واحدة من تثبيت العرض.</p>
+
+            <div class="capture-card">
+                <div style="margin-bottom: 1rem; font-weight: 600;">كيف نبلغك عند التوفر؟</div>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="setTab('email')">📧 إيميل</button>
+                    <button class="tab" onclick="setTab('whatsapp')">📱 واتساب</button>
+                </div>
+
+                <input id="inp-email" type="email" class="input" placeholder="بريدك الإلكتروني...">
+                <input id="inp-whatsapp" type="tel" class="input hidden" placeholder="رقم الواتساب...">
+
+                <button onclick="submitLead()" class="btn btn-primary">ثبت العرض وأبلغني 🚀</button>
+                <div id="msg-success" class="hidden" style="color: green; font-weight: bold; margin-top: 1rem;">تم التسجيل بنجاح! شكراً لك.</div>
+            </div>
+
+            <!-- Survey -->
+            <div style="margin-top: 2rem;">
+                <p style="font-weight: 600; margin-bottom: 1rem;">لو توفر بسعر <span id="el-price" style="color: var(--primary-color);"></span> هل تشتريه؟</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="sendSurvey('yes')" class="btn" style="width: auto; background: #eee; color: #333; padding: 0.5rem 1.5rem;">نعم</button>
+                    <button onclick="sendSurvey('maybe')" class="btn" style="width: auto; background: #eee; color: #333; padding: 0.5rem 1.5rem;">ربما</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        //  1. CONFIG & DATA (البيانات)
+        // ==========================================
+        
+        // لمحاكاة قاعدة البيانات (هذا ما سيعيده الـ API الخاص بك مستقبلاً)
+        const MOCK_DB = {
+            "demo": {
+                // Identity
+                name: "متجر المسافر",
+                logo: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png",
+                color: "#2563EB",
+                // Product
+                title: "سافر بأمان وثقة تامة",
+                subtitle: "الحقيبة الوحيدة المصممة هندسياً لتكون مستحيلة الفتح وأنت ترتديها.",
+                img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
+                video: null, // "https://www.youtube.com/embed/..."
+                pain: "السرقة وضياع الأغراض",
+                features: ["سحابات مخفية تماماً", "منفذ شحن USB مدمج", "مقاومة للقطع والماء"],
+                // Offer & Proof
+                signal: "ارتفاع الطلب 40% هذا الشهر",
+                offerTitle: "خصم 20% للإطلاق",
+                offerSub: "لأول 50 طلب فقط (الكمية محدودة)",
+                price: "249 ر.س",
+                // Tech
+                pixels: { tiktok: "", snap: "", meta: "" }
+            }
+        };
+
+        // إعدادات النظام
+        const urlParams = new URLSearchParams(window.location.search);
+        const storeId = urlParams.get('store') || 'demo';
+        let storeData = MOCK_DB[storeId] || MOCK_DB['demo']; // Fallback
+        
+        // تتبع الوقت
+        let startTime = Date.now();
+        let activeTab = 'email';
+
+        // ==========================================
+        //  2. INIT FUNCTION (التشغيل)
+        // ==========================================
+        function init() {
+            // -- Apply Colors --
+            document.documentElement.style.setProperty('--primary-color', storeData.color);
+
+            // -- Header --
+            if(storeData.logo) {
+                document.getElementById('el-logo').src = storeData.logo;
+                document.getElementById('el-logo').classList.remove('hidden');
+            } else {
+                document.getElementById('el-storename').innerText = storeData.name;
+                document.getElementById('el-storename').classList.remove('hidden');
+            }
+            document.title = storeData.title;
+
+            // -- Content --
+            document.getElementById('el-title').innerText = storeData.title;
+            document.getElementById('el-subtitle').innerText = storeData.subtitle;
+            document.getElementById('el-pain').innerText = storeData.pain;
+            document.getElementById('el-price').innerText = storeData.price;
+            
+            // -- Media (Video vs Image) --
+            if(storeData.video) {
+                document.getElementById('el-video').innerHTML = `<iframe src="${storeData.video}" style="width:100%;height:100%;border:none;" allow="autoplay"></iframe>`;
+                document.getElementById('el-video').classList.remove('hidden');
+                document.getElementById('el-img').classList.add('hidden');
+            } else {
+                document.getElementById('el-img').src = storeData.img;
+            }
+
+            // -- Features --
+            const ul = document.getElementById('el-features');
+            storeData.features.forEach(f => {
+                let li = document.createElement('li');
+                li.innerText = f;
+                ul.appendChild(li);
+            });
+
+            // -- Offer & Signal --
+            if(storeData.signal) {
+                document.getElementById('el-signal').innerText = "🔥 " + storeData.signal;
+                document.getElementById('el-signal').classList.remove('hidden');
+            }
+            document.getElementById('el-offer-title').innerText = storeData.offerTitle;
+            document.getElementById('el-offer-sub').innerText = storeData.offerSub;
+
+            // -- Analytics: PageView --
+            sendAnalytics('page_view');
+            firePixels('PageView');
+
+            // Hide Loader
+            setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+        }
+
+        // ==========================================
+        //  3. ACTIONS & ANALYTICS (التفاعل)
+        // ==========================================
+
+        // زر الاهتمام (Main CTA)
+        document.getElementById('btn-cta').addEventListener('click', () => {
+            sendAnalytics('cta_click');
+            firePixels('AddToCart'); // Signal intent
+            
+            document.getElementById('view-product').classList.add('hidden');
+            document.getElementById('view-capture').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        });
+
+        // تبديل التبويبات (Email/Whatsapp)
+        window.setTab = function(type) {
+            activeTab = type;
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if(type === 'email') {
+                document.getElementById('inp-email').classList.remove('hidden');
+                document.getElementById('inp-whatsapp').classList.add('hidden');
+            } else {
+                document.getElementById('inp-email').classList.add('hidden');
+                document.getElementById('inp-whatsapp').classList.remove('hidden');
+            }
+        }
+
+        // إرسال البيانات (Lead)
+        window.submitLead = function() {
+            let val = activeTab === 'email' ? document.getElementById('inp-email').value : document.getElementById('inp-whatsapp').value;
+            
+            if(val.length > 3) {
+                sendAnalytics('lead_captured', { type: activeTab, value: val });
+                firePixels('Lead');
+                
+                document.getElementById('msg-success').classList.remove('hidden');
+                document.querySelector('.capture-card button').style.display = 'none'; // Hide button
+            } else {
+                alert("يرجى إدخال بيانات صحيحة");
+            }
+        }
+
+        // الاستبيان (Survey)
+        window.sendSurvey = function(ans) {
+            sendAnalytics('survey_response', { answer: ans });
+            alert("شكراً لرأيك!");
+        }
+
+        // --- دالة إرسال البيانات إلى سيرفرك (THE MOST IMPORTANT PART) ---
+        function sendAnalytics(eventName, extraData = {}) {
+            const payload = {
+                store_id: storeId,
+                event: eventName,
+                timestamp: Date.now(),
+                time_on_page: (Date.now() - startTime) / 1000,
+                source: document.referrer,
+                ...extraData
+            };
+
+            console.log(`📡 Sending to CEOx Backend:`, payload);
+
+            // TODO: Uncomment when backend is ready
+            /*
+            fetch('https://your-backend-api.com/track', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            */
+        }
+
+        // --- دالة تشغيل البيكسل (Platforms) ---
+        function firePixels(evName) {
+            // هنا يتم تفعيل أكواد المنصات إذا وجدت في storeData.pixels
+            // console.log(`⚡ Firing Pixel: ${evName}`);
+        }
+
+        // تشغيل
+        init();
+
+    </script>
+</body>
+</html>
