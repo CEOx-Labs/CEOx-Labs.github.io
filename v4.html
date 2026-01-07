@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تحميل المتجر...</title>
+    
+    <!-- الخطوط -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة السلايدر (لتقليب الصور باحترافية) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <style>
+        /* === تصميم الـ SYSTEM === */
+        :root {
+            --primary: #000; /* ديناميكي */
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --text: #1E293B;
+            --text-light: #64748B;
+            --radius: 12px;
+            --font: 'Cairo', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); padding-bottom: 90px; }
+        
+        .app { max-width: 480px; margin: 0 auto; background: var(--surface); min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.05); position: relative; }
+        .hidden { display: none !important; }
+
+        /* === HEADER === */
+        .nav-bar {
+            height: 60px; display: flex; align-items: center; justify-content: center;
+            border-bottom: 1px solid #F1F5F9; background: #fff; position: sticky; top: 0; z-index: 50;
+        }
+        .nav-logo { height: 32px; object-fit: contain; }
+        .nav-title { font-weight: 800; font-size: 1.1rem; color: var(--primary); letter-spacing: -0.5px; }
+
+        /* === MEDIA SLIDER (معرض الصور) === */
+        .product-gallery {
+            width: 100%; aspect-ratio: 1/1; /* مربع */
+            background: #f8f8f8; position: relative;
+        }
+        .swiper { width: 100%; height: 100%; }
+        .swiper-slide { display: flex; align-items: center; justify-content: center; background: #fff; }
+        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .swiper-pagination-bullet-active { background: var(--primary) !important; }
+        
+        /* أيقونة الفيديو فوق الصورة */
+        .video-trigger {
+            position: absolute; bottom: 15px; left: 15px; z-index: 10;
+            background: rgba(0,0,0,0.7); color: #fff;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;
+            display: flex; align-items: center; gap: 5px; cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        /* === قسم الفيديو (يظهر عند الضغط) === */
+        .video-modal {
+            position: fixed; inset: 0; background: #000; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .close-video {
+            position: absolute; top: 20px; left: 20px; color: #fff;
+            font-size: 1rem; background: rgba(255,255,255,0.2);
+            padding: 8px 16px; border-radius: 20px; cursor: pointer;
+        }
+        .video-frame { width: 100%; aspect-ratio: 16/9; }
+
+        /* === المحتوى === */
+        .main-content { padding: 1.2rem; }
+        
+        .live-viewer {
+            font-size: 0.8rem; color: #DC2626; display: flex; align-items: center; gap: 5px; margin-bottom: 0.5rem; font-weight: 600;
+        }
+        .live-dot { width: 8px; height: 8px; background: #DC2626; border-radius: 50%; animation: pulse 1.5s infinite; }
+
+        .prod-title { font-size: 1.4rem; font-weight: 700; line-height: 1.3; margin-bottom: 0.5rem; }
+        .prod-price { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem; }
+        
+        .divider { height: 8px; background: #F1F5F9; margin: 1.5rem -1.2rem; }
+
+        .section-title { font-weight: 700; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px; }
+        
+        .desc-text { color: var(--text-light); font-size: 0.95rem; line-height: 1.7; }
+
+        /* المميزات */
+        .feat-item {
+            display: flex; gap: 12px; margin-bottom: 1rem;
+            background: #fff; border: 1px solid #E2E8F0; padding: 10px; border-radius: 8px;
+        }
+        .feat-icon { color: var(--primary); font-size: 1.2rem; }
+        
+        /* شريط الثقة */
+        .trust-bar {
+            display: flex; gap: 10px; justify-content: space-between; margin-top: 2rem;
+            background: #F8FAFC; padding: 15px; border-radius: 8px;
+        }
+        .trust-item { text-align: center; font-size: 0.7rem; color: #64748B; flex: 1; }
+        .trust-icon { font-size: 1.2rem; display: block; margin-bottom: 5px; }
+
+        /* === STICKY FOOTER === */
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto;
+            background: #fff; padding: 12px 1.2rem; border-top: 1px solid #E2E8F0;
+            display: flex; gap: 10px; align-items: center; z-index: 40;
+        }
+        .btn-main {
+            flex: 1; background: var(--primary); color: #fff;
+            padding: 12px; border-radius: 10px; font-weight: 700; font-size: 1rem;
+            border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-main:active { opacity: 0.9; transform: scale(0.98); }
+
+        /* === صفحة التسجيل === */
+        .capture-view { padding: 2rem 1.5rem; text-align: center; }
+        .capture-input {
+            width: 100%; padding: 12px; border: 2px solid #E2E8F0;
+            border-radius: 10px; font-size: 1rem; margin-bottom: 1rem; outline: none; transition: 0.3s;
+        }
+        .capture-input:focus { border-color: var(--primary); }
+        
+        .flag-select {
+            padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; background: #fff; margin-bottom: 1rem; width: 100%;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* لودر */
+        #loader { position: fixed; inset: 0; background: #fff; z-index: 999; display: flex; justify-content: center; align-items: center; }
+        .loading-spin { width: 40px; height: 40px; border: 4px solid #eee; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="loading-spin"></div></div>
+
+    <!-- مشغل الفيديو (Modals) -->
+    <div id="video-modal" class="video-modal hidden">
+        <div class="close-video" onclick="closeVideo()">✕ إغلاق الفيديو</div>
+        <div id="video-container" class="video-frame"></div>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="view-home" class="app">
+        
+        <!-- الهيدر -->
+        <nav class="nav-bar">
+            <img id="el-logo" class="nav-logo hidden">
+            <span id="el-storename" class="nav-title hidden"></span>
+        </nav>
+
+        <!-- سلايدر الصور -->
+        <div class="product-gallery">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper" id="img-wrapper">
+                    <!-- الصور ستضاف هنا تلقائياً -->
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <!-- زر تشغيل الفيديو (يظهر فقط اذا توفر فيديو) -->
+            <div id="btn-watch" class="video-trigger hidden" onclick="openVideo()">
+                <span>▶</span> شاهد الفيديو
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- عداد الزوار (وهمي ذكي) -->
+            <div class="live-viewer">
+                <div class="live-dot"></div>
+                <span>يشاهده الآن <span id="view-count">12</span> شخص</span>
+            </div>
+
+            <h1 id="el-title" class="prod-title">...</h1>
+            <div class="prod-price"><span id="el-price">...</span></div>
+
+            <div class="divider"></div>
+
+            <!-- الألم والحل -->
+            <div class="section-title"><span>💡</span> فكرة المنتج</div>
+            <p id="el-pain" class="desc-text" style="margin-bottom: 1rem;">...</p>
+            <p id="el-desc" class="desc-text">...</p>
+
+            <div class="divider"></div>
+
+            <!-- المميزات -->
+            <div class="section-title"><span>⭐</span> لماذا ستحبه؟</div>
+            <div id="features-container"></div>
+
+            <!-- أختام الثقة -->
+            <div class="trust-bar">
+                <div class="trust-item">
+                    <span class="trust-icon">🚚</span>
+                    <div>شحن سريع</div>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">🛡️</span>
+                    <div>ضمان الجودة</div>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">💳</span>
+                    <div>دفع آمن</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الشريط السفلي -->
+        <div class="bottom-bar">
+            <button class="btn-main" onclick="goToCapture()">
+                نعم، أنا مهتم
+                <span style="font-size: 0.8rem; font-weight: 400; opacity: 0.8;">(بدون دفع)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- صفحة التسجيل -->
+    <div id="view-capture" class="app hidden">
+        <nav class="nav-bar">
+            <span class="nav-title">تثبيت الاهتمام</span>
+        </nav>
+
+        <div class="capture-view">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+            <h2 style="margin-bottom: 0.5rem;">خيار موفق!</h2>
+            <p style="color: var(--text-light); margin-bottom: 2rem;">سجل بياناتك لنخبرك فور توفر المنتج (الكمية محدودة).</p>
+
+            <!-- تبديل (إيميل / واتساب) -->
+            <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+                <button class="btn-main" id="btn-tab-email" style="background:#eee; color:#333;" onclick="setTab('email')">✉️ إيميل</button>
+                <button class="btn-main" id="btn-tab-wa" style="background:#eee; color:#333;" onclick="setTab('whatsapp')">📱 واتساب</button>
+            </div>
+
+            <div id="input-area-email">
+                <input type="email" id="inp-email" class="capture-input" placeholder="البريد الإلكتروني...">
+            </div>
+
+            <div id="input-area-wa" class="hidden">
+                <select id="inp-country" class="flag-select">
+                    <option value="+966">🇸🇦 السعودية (+966)</option>
+                    <option value="+971">🇦🇪 الإمارات (+971)</option>
+                    <option value="+965">🇰🇼 الكويت (+965)</option>
+                    <option value="+974">🇶🇦 قطر (+974)</option>
+                </select>
+                <input type="tel" id="inp-wa" class="capture-input" placeholder="رقم الجوال (بدون صفر)...">
+            </div>
+
+            <button class="btn-main" onclick="submitLead()">تأكيد وإرسال 🚀</button>
+            <div id="success-msg" class="hidden" style="margin-top: 1rem; color: green; font-weight: bold;">تم التسجيل بنجاح!</div>
+        </div>
+    </div>
+
+    <!-- سكربت السلايدر -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        // === 1. قاعدة البيانات (DEMO DATA) ===
+        const DB = {
+            "demo": {
+                // الهوية
+                meta: { name: "ترافل جير", logo: "https://cdn-icons-png.flaticon.com/512/3081/3081559.png", color: "#2563EB" },
+                // المنتج (يدعم صور متعددة + فيديو)
+                product: {
+                    title: "حقيبة الظهر المضادة للسرقة - الإصدار المطور",
+                    price: "249 ر.س",
+                    // مصفوفة الصور (سلايدر)
+                    images: [
+                        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
+                        "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?w=800&q=80",
+                        "https://images.unsplash.com/photo-1622560480605-d83c852d5c91?w=800&q=80"
+                    ],
+                    // فيديو يوتيوب (Embed ID)
+                    video: "https://www.youtube.com/embed/dQw4w9WgXcQ", 
+                    pain: "هل تخاف دائماً من اللصوص في الأماكن المزدحمة؟",
+                    desc: "الحقيبة الوحيدة المصممة بسحابات مخفية تماماً، مما يجعل فتحها مستحيلاً وأنت ترتديها. سافر براحة بال تامة.",
+                    features: ["سحابات خلفية مخفية", "قماش مقاوم للقطع والماء", "منفذ شحن USB مدمج"]
+                }
+            },
+            
+            // متجر القهوة (لتجربة الفيديو والتصميم المختلف)
+            "coffee": {
+                meta: { name: "أريب كوفي", logo: "", color: "#92400E" }, // لون بني
+                product: {
+                    title: "الكوب الذكي - يحفظ الحرارة تلقائياً",
+                    price: "189 ر.س",
+                    images: [
+                        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&q=80",
+                        "https://images.unsplash.com/photo-1512568400610-62da28bc8a13?w=800&q=80"
+                    ],
+                    video: "", // لا يوجد فيديو هنا للتجربة
+                    pain: "تعبت من برودة قهوتك وأنت مشغول؟",
+                    desc: "قاعدة تسخين ذكية تحافظ على مشروبك في درجة الحرارة المثالية (55 درجة) طوال اليوم.",
+                    features: ["يعمل بالحساسات (تلقائي)", "آمن ومقاوم للماء", "مناسب لجميع أنواع الأكواب"]
+                }
+            }
+        };
+
+        // === 2. المنطق البرمجي ===
+        const params = new URLSearchParams(window.location.search);
+        const storeId = params.get('store') || 'demo';
+        const data = DB[storeId] || DB['demo'];
+        let activeTab = 'email';
+
+        function init() {
+            // الألوان
+            document.documentElement.style.setProperty('--primary', data.meta.color);
+
+            // الهيدر
+            if(data.meta.logo) {
+                document.getElementById('el-logo').src = data.meta.logo;
+                document.getElementById('el-logo').classList.remove('hidden');
+            } else {
+                document.getElementById('el-storename').innerText = data.meta.name;
+                document.getElementById('el-storename').classList.remove('hidden');
+            }
+
+            // السلايدر (الصور)
+            const wrapper = document.getElementById('img-wrapper');
+            data.product.images.forEach(imgUrl => {
+                wrapper.innerHTML += `<div class="swiper-slide"><img src="${imgUrl}"></div>`;
+            });
+
+            // تهيئة السلايدر
+            new Swiper(".mySwiper", {
+                pagination: { el: ".swiper-pagination", clickable: true },
+                loop: true
+            });
+
+            // الفيديو
+            if(data.product.video) {
+                document.getElementById('btn-watch').classList.remove('hidden');
+            }
+
+            // النصوص
+            document.getElementById('el-title').innerText = data.product.title;
+            document.getElementById('el-price').innerText = data.product.price;
+            document.getElementById('el-pain').innerText = data.product.pain;
+            document.getElementById('el-desc').innerText = data.product.desc;
+
+            // المميزات
+            const featContainer = document.getElementById('features-container');
+            data.product.features.forEach(f => {
+                featContainer.innerHTML += `
+                    <div class="feat-item">
+                        <span class="feat-icon">✔</span>
+                        <div>${f}</div>
+                    </div>
+                `;
+            });
+
+            // عداد زوار عشوائي (بين 10 و 30)
+            document.getElementById('view-count').innerText = Math.floor(Math.random() * (30 - 10 + 1) + 10);
+
+            // إخفاء اللودر
+            setTimeout(() => document.getElementById('loader').style.display = 'none', 600);
+        }
+
+        // === 3. وظائف الفيديو ===
+        function openVideo() {
+            if(!data.product.video) return;
+            document.getElementById('video-container').innerHTML = `<iframe width="100%" height="100%" src="${data.product.video}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            document.getElementById('video-modal').classList.remove('hidden');
+        }
+        function closeVideo() {
+            document.getElementById('video-modal').classList.add('hidden');
+            document.getElementById('video-container').innerHTML = ''; // إيقاف الفيديو
+        }
+
+        // === 4. وظائف التسجيل ===
+        function goToCapture() {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-capture').classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function setTab(tab) {
+            activeTab = tab;
+            // تنسيق الأزرار
+            document.getElementById('btn-tab-email').style.background = tab === 'email' ? data.meta.color : '#eee';
+            document.getElementById('btn-tab-email').style.color = tab === 'email' ? '#fff' : '#333';
+            
+            document.getElementById('btn-tab-wa').style.background = tab === 'whatsapp' ? data.meta.color : '#eee';
+            document.getElementById('btn-tab-wa').style.color = tab === 'whatsapp' ? '#fff' : '#333';
+
+            // تبديل الحقول
+            if(tab === 'email') {
+                document.getElementById('input-area-email').classList.remove('hidden');
+                document.getElementById('input-area-wa').classList.add('hidden');
+            } else {
+                document.getElementById('input-area-email').classList.add('hidden');
+                document.getElementById('input-area-wa').classList.remove('hidden');
+            }
+        }
+
+        function submitLead() {
+            let val = activeTab === 'email' ? document.getElementById('inp-email').value : document.getElementById('inp-wa').value;
+            
+            if(val.length > 3) {
+                // إرسال البيانات (في المستقبل)
+                console.log("Lead:", val);
+                document.getElementById('success-msg').classList.remove('hidden');
+            } else {
+                alert("يرجى إدخال بيانات صحيحة");
+            }
+        }
+
+        // إعداد التبويب الافتراضي (تلوينه)
+        setTimeout(() => setTab('email'), 100);
+
+        init();
+    </script>
+</body>
+</html>
